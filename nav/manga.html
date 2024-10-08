@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wensite</title>
+   
+</head>
+<body>
+    <header>
+        <h1>My Manga Collection</h1>
+    </header>
+    
+    <main>
+        <div class="manga-container" id="manga-container">
+            <div class="manga-card" onclick="showEpisodes('manga1')">
+                <img src="yaya.jpg" alt="manga 1">
+                <h2>Parallel Wrld</h2>
+            </div>
+            <div class="manga-card" onclick="showEpisodes('manga2')">
+                <img src="" alt="Manga 2">
+                <h2>Manga Title 2</h2>
+            </div>
+            <!-- Add more manga cards as needed -->
+        </div>
+
+        <!-- Episodes Section -->
+        <div id="episodes-section" class="episodes-section" style="display: none;">
+            <button onclick="goBackToMangaList()">Back to Manga List</button>
+            <h2 id="manga-title">Manga Title</h2>
+            <div id="episodes-container" class="episodes-container">
+                <!-- Episodes will be dynamically loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <div id="manga-reader" class="reader">
+        <button onclick="closeManga()">Close</button>
+        <div class="reader-content">
+            <img id="manga-page" src="" alt="Manga Page">
+        </div>
+        <button onclick="nextPage()">Next</button>
+    </div>
+
+    <div id="particles-js"></div>
+
+    <!-- Scripts -->
+    <script type="text/javascript" src="src/particles.js"></script>
+    <script type="text/javascript" src="src/app.js"></script>
+
+   
+</body>
+</html>
+
+
+    <style>
+
+        
+
+       body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+main {
+    padding: 20px;
+}
+
+.manga-container, .episodes-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.manga-card, .episode-card {
+    width: 200px;
+    margin: 15px;
+    cursor: pointer;
+}
+
+.manga-card img, .episode-card img {
+    width: 100%;
+    height: auto;
+}
+
+.manga-card h2, .episode-card h2 {
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.episodes-section {
+    display: none;
+}
+
+.reader {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+}
+
+.reader-content img {
+    max-width: 80%;
+    max-height: 80%;
+}
+
+.reader button {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.reader button:hover {
+    background-color: #555;
+}
+
+
+    </style>
+
+    <div id="manga-reader" class="reader">
+        <button onclick="closeManga()">Close</button>
+        <div class="reader-content">
+            <img id="manga-page" src="" alt="Manga Page">
+        </div>
+        <button onclick="nextPage()">Next</button>
+    </div>
+
+   <script>
+    let mangaEpisodes = {
+    'manga1': {
+        title: 'Manga Title 1',
+        episodes: ['Episode 1', 'Episode 2', 'Episode 3']
+    },
+    'manga2': {
+        title: 'Manga Title 2',
+        episodes: ['Episode 1', 'Episode 2']
+    }
+};
+
+let mangaPages = {
+    'manga1-episode1': ['manga1-ep1-page1.jpg', 'manga1-ep1-page2.jpg'], // Replace with real page URLs
+    'manga1-episode2': ['manga1-ep2-page1.jpg', 'manga1-ep2-page2.jpg'],
+    'manga2-episode1': ['manga2-ep1-page1.jpg', 'manga2-ep1-page2.jpg']
+};
+
+let currentManga = '';
+let currentEpisode = '';
+let currentPage = 0;
+
+function showEpisodes(manga) {
+    currentManga = manga;
+    let episodesSection = document.getElementById('episodes-section');
+    let episodesContainer = document.getElementById('episodes-container');
+    let mangaTitle = document.getElementById('manga-title');
+    
+    // Set the manga title
+    mangaTitle.textContent = mangaEpisodes[manga].title;
+
+    // Clear previous episodes
+    episodesContainer.innerHTML = '';
+
+    // Add episode cards dynamically
+    mangaEpisodes[manga].episodes.forEach((episode, index) => {
+        let episodeCard = document.createElement('div');
+        episodeCard.classList.add('episode-card');
+        episodeCard.innerHTML = `
+            <img src="episode-placeholder.jpg" alt="${episode}">
+            <h2>${episode}</h2>
+        `;
+        episodeCard.onclick = () => openEpisode(manga, index + 1);
+        episodesContainer.appendChild(episodeCard);
+    });
+
+    // Show the episodes section
+    episodesSection.style.display = 'block';
+
+    // Hide the manga list
+    document.getElementById('manga-container').style.display = 'none';
+}
+
+function goBackToMangaList() {
+    document.getElementById('episodes-section').style.display = 'none';
+    document.getElementById('manga-container').style.display = 'flex';
+}
+
+function openEpisode(manga, episodeNumber) {
+    currentEpisode = `manga${manga}-episode${episodeNumber}`;
+    currentPage = 0;
+    document.getElementById('manga-page').src = mangaPages[currentEpisode][currentPage];
+    document.getElementById('manga-reader').style.display = 'flex';
+}
+
+function closeManga() {
+    document.getElementById('manga-reader').style.display = 'none';
+}
+
+function nextPage() {
+    if (currentPage < mangaPages[currentEpisode].length - 1) {
+        currentPage++;
+        document.getElementById('manga-page').src = mangaPages[currentEpisode][currentPage];
+    }
+}
+
+
+   </script>
+</body>
+</html>
